@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "521683798250",
+    "project_id": "jezzyshopping-d37ae",
+    "storage_bucket": "jezzyshopping-d37ae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:521683798250:android:9c95ba6860c843ef09ef93",
+        "android_client_info": {
+          "package_name": "com.jezzykubphom.jezzyshopping"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "521683798250-3mf3rmns9b4koojt96k2umsjkdu0msnr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHHiU0qtr2zu5OBNi5bxNNH2RR_h-L950"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "521683798250-3mf3rmns9b4koojt96k2umsjkdu0msnr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
