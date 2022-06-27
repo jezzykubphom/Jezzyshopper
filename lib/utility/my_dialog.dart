@@ -15,7 +15,9 @@ class MyDialog {
       {required String title,
       required String SubTitle,
       String? label,
-      Function()? pressFunc}) async {
+      Function()? pressFunc,
+      String? label2,
+      Function()? pressFunc2}) async {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -33,11 +35,15 @@ class MyDialog {
         ),
         actions: [
           ShowTextButton(
-              label: label ?? 'OK',
-              pressFunc: pressFunc ??
-                  () {
-                    Navigator.pop(context);
-                  })
+            label: label ?? 'OK',
+            pressFunc: pressFunc ??
+                () {
+                  Navigator.pop(context);
+                },
+          ),
+          label2 == null
+              ? const SizedBox()
+              : ShowTextButton(label: label2, pressFunc: pressFunc2!),
         ],
       ),
     );
