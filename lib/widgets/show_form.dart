@@ -10,6 +10,8 @@ class ShowForm extends StatelessWidget {
   final Function(String) changeFunc;
   final bool? obsecu;
   final TextEditingController? textEditingController;
+  final double? width;
+  final TextInputType? textInputType;
   const ShowForm({
     Key? key,
     required this.label,
@@ -17,15 +19,18 @@ class ShowForm extends StatelessWidget {
     required this.changeFunc,
     this.obsecu,
     this.textEditingController,
+    this.width,
+    this.textInputType,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 16),
-      width: 250,
+      width: width ?? 250,
       height: 40,
       child: TextFormField(
+        keyboardType: textInputType ?? TextInputType.text,
         controller: textEditingController,
         obscureText: obsecu ?? false,
         onChanged: changeFunc,

@@ -14,6 +14,8 @@ import 'package:jezzyshopping/widgets/show_text.dart';
 import 'package:jezzyshopping/widgets/shwo_imag_internet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../bodys/manage_product_shoper.dart';
+
 class ShopperService extends StatefulWidget {
   const ShopperService({Key? key}) : super(key: key);
 
@@ -26,9 +28,14 @@ class _ShopperServiceState extends State<ShopperService> {
   var bodys = <Widget>[
     const OrderShoper(),
     const InformationShoper(),
+    const ManageProductShoper(),
   ];
 
-  var titles = <String>['My Order', 'Information'];
+  var titles = <String>[
+    'My Order',
+    'Information',
+    'Manage Product',
+  ];
 
   int indexBody = 0;
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -107,6 +114,18 @@ class _ShopperServiceState extends State<ShopperService> {
               });
             },
             subTitle: 'Details Shop',
+          ),
+          Divider(color: MyConstant.dark),
+          ShowMenu(
+            iconData: Icons.manage_search,
+            title: titles[2],
+            pressFunc: () {
+              Navigator.pop(context);
+              setState(() {
+                indexBody = 2;
+              });
+            },
+            subTitle: 'Manage Product',
           ),
           Divider(color: MyConstant.dark),
           const Spacer(),
