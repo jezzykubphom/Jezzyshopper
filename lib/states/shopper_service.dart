@@ -7,6 +7,7 @@ import 'package:jezzyshopping/models/user_model.dart';
 import 'package:jezzyshopping/utility/my_api.dart';
 import 'package:jezzyshopping/utility/my_constant.dart';
 import 'package:jezzyshopping/widgets/Show_image_avatar.dart';
+import 'package:jezzyshopping/widgets/show_icon_button.dart';
 import 'package:jezzyshopping/widgets/show_menu.dart';
 import 'package:jezzyshopping/widgets/show_sign_out.dart';
 import 'package:jezzyshopping/widgets/show_text.dart';
@@ -30,6 +31,7 @@ class _ShopperServiceState extends State<ShopperService> {
   var titles = <String>['My Order', 'Information'];
 
   int indexBody = 0;
+  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -55,7 +57,15 @@ class _ShopperServiceState extends State<ShopperService> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
+        leading: ShowIconButton(
+          iconData: Icons.menu,
+          pressFunc: () {
+            processFindUserModel();
+            scaffoldKey.currentState!.openDrawer();
+          },
+        ),
         title: ShowText(
           label: titles[indexBody],
           textStyle: MyConstant().h2Style(),
