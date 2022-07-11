@@ -7,11 +7,14 @@ class ShowIconButton extends StatelessWidget {
   final IconData iconData;
   final Function() pressFunc;
   final Color? color;
+  final double? size;
+
   const ShowIconButton({
     Key? key,
     required this.iconData,
     required this.pressFunc,
     this.color,
+    this.size,
   }) : super(key: key);
 
   @override
@@ -21,6 +24,7 @@ class ShowIconButton extends StatelessWidget {
       icon: Icon(
         iconData,
         color: color ?? MyConstant.dark,
+        size: size ?? 24,
       ),
     );
   }

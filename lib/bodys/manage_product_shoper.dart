@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:jezzyshopping/models/product_model.dart';
 import 'package:jezzyshopping/states/add_product_shoper.dart';
+import 'package:jezzyshopping/states/edit_product_shoper.dart';
 import 'package:jezzyshopping/utility/my_calculate.dart';
 import 'package:jezzyshopping/utility/my_constant.dart';
 import 'package:jezzyshopping/utility/my_dialog.dart';
@@ -139,7 +140,14 @@ class _ManageProductShoperState extends State<ManageProductShoper> {
                       ShowIconButton(
                         color: const Color.fromARGB(255, 7, 185, 13),
                         iconData: Icons.edit_off_outlined,
-                        pressFunc: () {},
+                        pressFunc: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditProductShoper(
+                                    productModel: productModels[index]),
+                              )).then((value) => null);
+                        },
                       ),
                       ShowIconButton(
                         color: const Color.fromARGB(255, 244, 24, 9),
