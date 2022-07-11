@@ -279,5 +279,15 @@ class _AddProductShoperState extends State<AddProductShoper> {
       index++;
     }
     print('urlImages ==>> $urlImages');
+    String code = 'S${Random().nextInt(100000)}';
+    String picture = urlImages.toString();
+    //print('Picture ==>> $picture');
+
+    String pathInsertProduct =
+        'http://www.program2me.com/api/ungapi/ProductAdd.php?shopcode=$shopCode&code=$code&name=$nameProduct&unit=$unit&price=$price&qty=$qty&picture=$picture';
+    await Dio().get(pathInsertProduct).then((value) {
+      //print('value ++++++++++++++ $value');
+      Navigator.pop(context);
+    });
   }
 }
