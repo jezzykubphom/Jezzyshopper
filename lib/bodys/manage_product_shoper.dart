@@ -146,7 +146,11 @@ class _ManageProductShoperState extends State<ManageProductShoper> {
                               MaterialPageRoute(
                                 builder: (context) => EditProductShoper(
                                     productModel: productModels[index]),
-                              )).then((value) => null);
+                              )).then((value) {
+                            load = true;
+                            readMyPorduct();
+                            setState(() {});
+                          });
                         },
                       ),
                       ShowIconButton(

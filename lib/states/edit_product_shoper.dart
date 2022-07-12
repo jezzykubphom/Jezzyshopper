@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
+import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -95,6 +97,7 @@ class _EditProductShoperState extends State<EditProductShoper> {
         label: 'Edit Product',
         pressFunc: () {
           if (change) {
+            processUploadAdnEditData();
           } else {
             MyDialog(context: context).normalDailog(
                 title: 'No Change', SubTitle: 'Please Edit Something');
@@ -102,6 +105,31 @@ class _EditProductShoperState extends State<EditProductShoper> {
         },
       ),
     );
+  }
+
+  Future<void> processUploadAdnEditData() async {
+    for (var i = 0; i < files.length; i++) {
+      if (files[i] != null) {
+        String nameFile = 'imageEdit${Random().nextInt(1000000)}.jpg';
+        Map<String, dynamic> map = {};
+        map['file'] =
+            await MultipartFile.fromFile(files[i]!.path, filename: nameFile);
+        String pathApi = 'http://www.program2me.com/api/ungapi/saveProduct.php';
+
+        FormData formData = FormData.fromMap(map);
+        await Dio().post(pathApi, data: formData).then((value) async {
+          String urlImage =
+              'http://www.program2me.com/api/ungapi/product/$nameFile';
+          urlImages[i] = urlImage;
+        });
+      }
+    }
+
+    String pathApiEditProduct =
+        'http://www.program2me.com/api/ungapi/ProductEditWhereId.php?id=${productModel!.id}&name=$name&unit=$unit&price=$price&qty=$qty&picture=${urlImages.toString()}';
+    await Dio().get(pathApiEditProduct).then((value) {
+      Navigator.pop(context);
+    });
   }
 
   Row iconAddPicture() {
