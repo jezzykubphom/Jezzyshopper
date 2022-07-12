@@ -1,5 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:jezzyshopping/models/product_model.dart';
 import 'package:jezzyshopping/utility/my_calculate.dart';
@@ -29,6 +32,10 @@ class _EditProductShoperState extends State<EditProductShoper> {
   TextEditingController unitController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   var urlImages = <String>[];
+  var files = <File?>[];
+
+  bool change = false; // true ==>> Have change
+  String? name, qty, unit, price;
 
   @override
   void initState() {
@@ -40,8 +47,17 @@ class _EditProductShoperState extends State<EditProductShoper> {
     unitController.text = productModel!.unit;
     priceController.text = productModel!.price;
 
+    name = productModel!.name;
+    qty = productModel!.qty;
+    unit = productModel!.unit;
+    price = productModel!.price;
+
     urlImages =
         MyCalulate().changeStriongToArray(string: productModel!.picture);
+
+    for (var i = 0; i < urlImages.length; i++) {
+      files.add(null);
+    }
   }
 
   @override
@@ -59,7 +75,10 @@ class _EditProductShoperState extends State<EditProductShoper> {
               height: 16,
             ),
             listImage(boxConstraints),
-            iconAddPicture(),
+            urlImages.length == 4 ? const SizedBox() : iconAddPicture(),
+            const SizedBox(
+              height: 16,
+            ),
             bottomEditProduct(),
             const SizedBox(
               height: 16,
@@ -74,7 +93,13 @@ class _EditProductShoperState extends State<EditProductShoper> {
     return createCenter(
       widget: ShowBotton(
         label: 'Edit Product',
-        pressFunc: () {},
+        pressFunc: () {
+          if (change) {
+          } else {
+            MyDialog(context: context).normalDailog(
+                title: 'No Change', SubTitle: 'Please Edit Something');
+          }
+        },
       ),
     );
   }
@@ -90,11 +115,41 @@ class _EditProductShoperState extends State<EditProductShoper> {
             size: 48,
             color: Color.fromARGB(255, 14, 137, 237),
             iconData: Icons.add_a_photo,
-            pressFunc: () {},
+            pressFunc: () {
+              MyDialog(context: context).normalDailog(
+                  label: 'Camera',
+                  pressFunc: () {
+                    Navigator.pop(context);
+                    processAddMorePicture(source: ImageSource.camera);
+                  },
+                  label2: 'Gallerty',
+                  pressFunc2: () {
+                    Navigator.pop(context);
+                    processAddMorePicture(source: ImageSource.gallery);
+                  },
+                  title: 'Soure Image',
+                  SubTitle: 'Please Tap Camera or Gallery');
+            },
           ),
         ],
       ),
     ));
+  }
+
+  Future<void> processAddMorePicture({required ImageSource source}) async {
+    change = true;
+    var result = await ImagePicker().pickImage(
+      source: source,
+      maxWidth: 800,
+      maxHeight: 800,
+    );
+    if (result != null) {
+      urlImages.add('');
+      files.add(null);
+      int index = files.length - 1;
+      files[index] = File(result.path);
+      setState(() {});
+    }
   }
 
   ListView listImage(BoxConstraints boxConstraints) {
@@ -114,9 +169,11 @@ class _EditProductShoperState extends State<EditProductShoper> {
                   alignment: Alignment.topCenter,
                   width: boxConstraints.maxWidth * 0.75,
                   height: boxConstraints.maxWidth * 0.75,
-                  child: Image.network(
-                    urlImages[index],
-                  ),
+                  child: files[index] == null
+                      ? Image.network(
+                          urlImages[index],
+                        )
+                      : Image.file(files[index]!),
                 ),
                 Container(
                   width: boxConstraints.maxWidth * 0.3,
@@ -128,7 +185,23 @@ class _EditProductShoperState extends State<EditProductShoper> {
                       ShowIconButton(
                         color: Color.fromARGB(255, 1, 157, 6),
                         iconData: Icons.edit_outlined,
-                        pressFunc: () {},
+                        pressFunc: () {
+                          MyDialog(context: context).normalDailog(
+                              label: 'Camera',
+                              pressFunc: () {
+                                Navigator.pop(context);
+                                processTakePhoto(
+                                    source: ImageSource.camera, index: index);
+                              },
+                              label2: 'Galerry',
+                              pressFunc2: () {
+                                Navigator.pop(context);
+                                processTakePhoto(
+                                    source: ImageSource.gallery, index: index);
+                              },
+                              title: 'Source Image?',
+                              SubTitle: 'Please Tap Camera Or Gallery');
+                        },
                       ),
                       urlImages.length == 1
                           ? const SizedBox()
@@ -143,15 +216,19 @@ class _EditProductShoperState extends State<EditProductShoper> {
                                     },
                                     label: 'Confirm',
                                     pressFunc: () {
+                                      change = true;
                                       Navigator.pop(context);
                                       print(
                                           'urlImages Before delete ==>> $urlImages');
                                       print('delete image index ==>> $index');
 
                                       urlImages.removeAt(index);
+                                      files.removeAt(index);
 
                                       print(
                                           'urlImages After delete ==>> $urlImages');
+
+                                      setState(() {});
                                     },
                                     title: 'Confirm Del?',
                                     SubTitle: 'Are you sure delete?');
@@ -174,7 +251,10 @@ class _EditProductShoperState extends State<EditProductShoper> {
         textEditingController: priceController,
         label: 'Price',
         iconData: Icons.money,
-        changeFunc: (String string) {},
+        changeFunc: (String string) {
+          price = string.trim();
+          change = true;
+        },
       ),
     );
   }
@@ -191,14 +271,20 @@ class _EditProductShoperState extends State<EditProductShoper> {
               width: 120,
               label: 'Qty',
               iconData: Icons.android,
-              changeFunc: (String string) {},
+              changeFunc: (String string) {
+                qty = string.trim();
+                change = true;
+              },
             ),
             ShowForm(
               textEditingController: unitController,
               width: 120,
               label: 'Unit',
               iconData: Icons.ac_unit,
-              changeFunc: (String string) {},
+              changeFunc: (String string) {
+                unit = string.trim();
+                change = true;
+              },
             ),
           ],
         ),
@@ -212,7 +298,10 @@ class _EditProductShoperState extends State<EditProductShoper> {
       textEditingController: nameController,
       label: 'Name',
       iconData: Icons.fingerprint,
-      changeFunc: (String string) {},
+      changeFunc: (String string) {
+        name = string.trim();
+        change = true;
+      },
     ));
   }
 
@@ -236,5 +325,17 @@ class _EditProductShoperState extends State<EditProductShoper> {
         decoration: MyConstant().mainAppBar(),
       ),
     );
+  }
+
+  Future<void> processTakePhoto(
+      {required ImageSource source, required int index}) async {
+    change = true;
+    var result = await ImagePicker().pickImage(
+      source: source,
+      maxWidth: 800,
+      maxHeight: 800,
+    );
+    files[index] = File(result!.path);
+    setState(() {});
   }
 }
