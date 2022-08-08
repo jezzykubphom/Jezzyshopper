@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:jezzyshopping/models/product_model.dart';
 import 'package:jezzyshopping/utility/my_calculate.dart';
 import 'package:jezzyshopping/utility/my_constant.dart';
+import 'package:jezzyshopping/widgets/show_button.dart';
 import 'package:jezzyshopping/widgets/show_icon_button.dart';
 import 'package:jezzyshopping/widgets/show_text.dart';
 import 'package:jezzyshopping/widgets/show_title%20.dart';
@@ -23,6 +24,7 @@ class DetialProduct extends StatefulWidget {
 class _DetialProductState extends State<DetialProduct> {
   ProductModel? productModel;
   var pictures = <String>[];
+  int amount = 1;
 
   @override
   void initState() {
@@ -49,20 +51,35 @@ class _DetialProductState extends State<DetialProduct> {
                   color: Colors.red,
                   size: 36,
                   iconData: Icons.remove_circle_outline,
-                  pressFunc: () {},
+                  pressFunc: () {
+                    if (amount > 1) {
+                      amount--;
+                    }
+                    setState(() {});
+                  },
                 ),
                 ShowText(
-                  label: '1',
+                  label: amount.toString(),
                   textStyle: MyConstant().h1Style(),
                 ),
                 ShowIconButton(
                   color: Colors.green,
                   size: 36,
                   iconData: Icons.add_circle_outline,
-                  pressFunc: () {},
+                  pressFunc: () {
+                    if (amount < double.parse(productModel!.qty).toInt()) {
+                      amount++;
+                    }
+
+                    setState(() {});
+                  },
                 )
               ],
-            )
+            ),
+            ShowBotton(
+              label: 'Add Cart',
+              pressFunc: () {},
+            ),
           ],
         ),
       ),
