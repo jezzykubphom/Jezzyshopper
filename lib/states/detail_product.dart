@@ -2,8 +2,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:jezzyshopping/models/product_model.dart';
+import 'package:jezzyshopping/models/sqlite_model.dart';
 import 'package:jezzyshopping/utility/my_calculate.dart';
 import 'package:jezzyshopping/utility/my_constant.dart';
+import 'package:jezzyshopping/utility/my_dialog.dart';
+import 'package:jezzyshopping/utility/sqlite_helper.dart';
 import 'package:jezzyshopping/widgets/show_button.dart';
 import 'package:jezzyshopping/widgets/show_icon_button.dart';
 import 'package:jezzyshopping/widgets/show_text.dart';
@@ -78,7 +81,9 @@ class _DetialProductState extends State<DetialProduct> {
             ),
             ShowBotton(
               label: 'Add Cart',
-              pressFunc: () {},
+              pressFunc: () {
+                processCheckCart();
+              },
             ),
           ],
         ),
@@ -112,6 +117,46 @@ class _DetialProductState extends State<DetialProduct> {
       flexibleSpace: Container(
         decoration: MyConstant().mainAppBar(),
       ),
+    );
+  }
+
+  Future<void> processCheckCart() async {
+    String shopcode = productModel!.shopcode;
+    print('Shopcode ==>> ${shopcode}');
+
+    await SQLiteHelper().readAllSQLite().then((value) {
+      if (value.isEmpty) {
+        // Cart Emtry
+        processAddCart();
+      } else {
+        // Cart Not Emtry
+        var sqliteModels = <SQLiteModel>[];
+        for (var element in value) {
+          sqliteModels.add(element);
+        }
+
+        if (shopcode == sqliteModels[0]) {
+          processAddCart();
+        } else {
+          MyDialog(context: context).normalDailog(
+              title: 'Shop False', SubTitle: 'กรุณาเลือกสินค้าจากร้านเดิมก่อน');
+        }
+      }
+    });
+  }
+
+  Future<void> processAddCart() async {
+    int priceInt = double.parse(productModel!.price).toInt();
+    int sumInt = priceInt * amount;
+
+    SQLiteModel sqLiteModel = SQLiteModel(
+      shopcode: productModel!.shopcode,
+      productId: productModel!.id,
+      name: productModel!.name,
+      unit: productModel!.unit,
+      price: productModel!.price.toString(),
+      amount: amount.toString(),
+      sum: sumInt.toString(),
     );
   }
 }
