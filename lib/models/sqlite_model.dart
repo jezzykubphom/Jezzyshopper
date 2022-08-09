@@ -4,6 +4,7 @@ import 'dart:convert';
 class SQLiteModel {
   final int? id;
   final String shopcode;
+  final String nameshop;
   final String productId;
   final String name;
   final String unit;
@@ -13,6 +14,7 @@ class SQLiteModel {
   SQLiteModel({
     this.id,
     required this.shopcode,
+    required this.nameshop,
     required this.productId,
     required this.name,
     required this.unit,
@@ -25,6 +27,7 @@ class SQLiteModel {
     return <String, dynamic>{
       'id': id,
       'shopcode': shopcode,
+      'nameshop': nameshop,
       'productId': productId,
       'name': name,
       'unit': unit,
@@ -38,6 +41,7 @@ class SQLiteModel {
     return SQLiteModel(
       id: map['id'] != null ? map['id'] as int : null,
       shopcode: map['shopcode'] as String,
+      nameshop: map['nameshop'] as String,
       productId: map['productId'] as String,
       name: map['name'] as String,
       unit: map['unit'] as String,

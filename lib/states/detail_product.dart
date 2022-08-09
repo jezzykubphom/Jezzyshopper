@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'package:jezzyshopping/models/product_model.dart';
 import 'package:jezzyshopping/models/sqlite_model.dart';
+import 'package:jezzyshopping/models/user_model.dart';
+import 'package:jezzyshopping/utility/my_api.dart';
 import 'package:jezzyshopping/utility/my_calculate.dart';
 import 'package:jezzyshopping/utility/my_constant.dart';
 import 'package:jezzyshopping/utility/my_dialog.dart';
@@ -28,12 +30,18 @@ class _DetialProductState extends State<DetialProduct> {
   ProductModel? productModel;
   var pictures = <String>[];
   int amount = 1;
+  UserModel? userModelShop;
 
   @override
   void initState() {
     super.initState();
     productModel = widget.productModel;
     pictures = MyCalulate().changeStriongToArray(string: productModel!.picture);
+    processFindUserModel();
+  }
+
+  Future<void> processFindUserModel() async {
+    userModelShop = await MyApi().findUserModel(user: productModel!.shopcode);
   }
 
   @override
@@ -135,11 +143,14 @@ class _DetialProductState extends State<DetialProduct> {
           sqliteModels.add(element);
         }
 
-        if (shopcode == sqliteModels[0]) {
+        // print('sqliteModels ==>> $sqliteModels');
+
+        if (shopcode == sqliteModels[0].shopcode) {
           processAddCart();
         } else {
           MyDialog(context: context).normalDailog(
-              title: 'Shop False', SubTitle: 'กรุณาเลือกสินค้าจากร้านเดิมก่อน');
+              title: 'Shop False',
+              SubTitle: 'กรุณาเลือกสินค้าจากร้านเดิมให้เรียบร้อยก่อน');
         }
       }
     });
@@ -157,6 +168,12 @@ class _DetialProductState extends State<DetialProduct> {
       price: productModel!.price.toString(),
       amount: amount.toString(),
       sum: sumInt.toString(),
+      nameshop: userModelShop!.Name,
     );
+    print('sqliteModel ==>> ${sqLiteModel.toMap()}');
+
+    await SQLiteHelper().insertSQLite(sqLiteModel: sqLiteModel).then((value) {
+      Navigator.pop(context);
+    });
   }
 }

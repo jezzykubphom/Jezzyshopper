@@ -8,11 +8,12 @@ class SQLiteHelper {
   final String tableDatabase = 'orderTABLE';
   final String columId = 'id';
   final String columShopcode = 'shopcode';
+  final String columNameShop = 'nameshop';
   final String columProductId = 'productId';
   final String columName = 'name';
   final String columUnit = 'unit';
   final String columPrice = 'price';
-  final String columAmount = 'amoun';
+  final String columAmount = 'amount';
   final String columSum = 'sum';
 
   SQLiteHelper() {
@@ -23,7 +24,7 @@ class SQLiteHelper {
     await openDatabase(
       join(await getDatabasesPath(), nameDatabase),
       onCreate: (db, version) => db.execute(
-          'CREATE TABLE $tableDatabase (id INTEGER PRIMARY KEY, $columShopcode TEXT, $columProductId TEXT, $columName TEXT, $columUnit TEXT, $columPrice TEXT, $columAmount TEXT, $columSum TEXT)'),
+          'CREATE TABLE $tableDatabase (id INTEGER PRIMARY KEY, $columShopcode TEXT, $columNameShop TEXT, $columProductId TEXT, $columName TEXT, $columUnit TEXT, $columPrice TEXT, $columAmount TEXT, $columSum TEXT)'),
       version: versionDatabase,
     );
   }
