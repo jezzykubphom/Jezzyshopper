@@ -11,13 +11,15 @@ class MyDialog {
     required this.context,
   });
 
-  Future<void> normalDailog(
-      {required String title,
-      required String SubTitle,
-      String? label,
-      Function()? pressFunc,
-      String? label2,
-      Function()? pressFunc2}) async {
+  Future<void> normalDailog({
+    required String title,
+    required String SubTitle,
+    String? label,
+    Function()? pressFunc,
+    String? label2,
+    Function()? pressFunc2,
+    Widget? contentWidget,
+  }) async {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -33,6 +35,7 @@ class MyDialog {
           ),
           subtitle: ShowText(label: SubTitle),
         ),
+        content: contentWidget ?? const SizedBox(),
         actions: [
           ShowTextButton(
             label: label ?? 'OK',

@@ -58,9 +58,30 @@ class SQLiteHelper {
     return sqliteModels;
   }
 
-  void editAmount() {}
+  Future<void> editAmount(
+      {required int idEdit, required SQLiteModel sqLiteModel}) async {
+    Database database = await connectedDatabase();
 
-  void deleteValueWhereId() {}
+    await database
+        .update(tableDatabase, sqLiteModel.toMap(), where: '$columId = $idEdit')
+        .then((value) {
+      print('Edit SQLite Success');
+    });
+  }
 
-  void clearSQLite() {}
+  Future<void> deleteValueWhereId({required int idDelete}) async {
+    Database database = await connectedDatabase();
+    await database
+        .delete(tableDatabase, where: '$columId = $idDelete')
+        .then((value) {
+      print('Delete SQLite at id : $idDelete Sucess');
+    });
+  }
+
+  Future<void> clearSQLite() async {
+    Database database = await connectedDatabase();
+    await database.delete(tableDatabase).then((value) {
+      print('Empty SQLite Success');
+    });
+  }
 } // End Clase
