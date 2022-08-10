@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:jezzyshopping/models/product_model.dart';
 import 'package:jezzyshopping/models/sqlite_model.dart';
+import 'package:jezzyshopping/models/user_model.dart';
 import 'package:jezzyshopping/utility/my_api.dart';
 import 'package:jezzyshopping/utility/my_constant.dart';
 import 'package:jezzyshopping/utility/my_dialog.dart';
@@ -34,6 +35,8 @@ class _ShowCartState extends State<ShowCart> {
   var prices = <String>[];
   var amounts = <String>[];
   var sums = <String>[];
+
+  UserModel? userModelShop;
 
   @override
   void initState() {
@@ -70,6 +73,9 @@ class _ShowCartState extends State<ShowCart> {
       } else {
         haveData = true;
         sqliteModels = value;
+
+        userModelShop =
+            await MyApi().findUserModel(user: sqliteModels[0].shopcode);
 
         for (var element in sqliteModels) {
           int sum = int.parse(element.sum);
@@ -382,11 +388,21 @@ class _ShowCartState extends State<ShowCart> {
 
     await Dio().get(urlAPI).then((value) async {
       // print('Order Success');
-      await SQLiteHelper().clearSQLite().then((value) {
+      await SQLiteHelper().clearSQLite().then((value) async {
         readAllSQLite();
         MyDialog(context: context).normalDailog(
             title: 'Order Success',
             SubTitle: 'ขอบคุณที่ใช้บริการ กรุณารอรับการยืนยัยจากร้านค้า');
+
+        // Process Send Noti to Shop
+        String tokenShop = userModelShop!.token;
+        print('Token Shop : $tokenShop');
+
+        await MyApi().processSendNotification(
+          token: tokenShop,
+          title: 'มีการสั่งซื้อสินค้า',
+          body: 'โปรดยืนยันคำสั่งซื้อ',
+        );
       });
     });
   }

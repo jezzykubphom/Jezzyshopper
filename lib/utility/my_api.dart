@@ -3,6 +3,28 @@ import 'package:jezzyshopping/models/product_model.dart';
 import 'package:jezzyshopping/models/user_model.dart';
 
 class MyApi {
+  Future<void> processSendNotification({
+    required String token,
+    required String title,
+    required String body,
+  }) async {
+    String urlAPI =
+        'http://www.program2me.com/api/ungapi/ungJadNoti.php?isAdd=true&token=$token&title=$title&body=$body';
+
+    await Dio().get(urlAPI).then((value) {
+      print('Send Notification Success');
+    });
+  }
+
+  Future<void> processUpdateToken(
+      {required String code, required String token}) async {
+    String urlAPI =
+        'http://www.program2me.com/api/ungapi/userUpdateToken.php?code=$code&token=$token';
+    await Dio().get(urlAPI).then((value) {
+      print('UpdateToken Success');
+    });
+  }
+
   Future<ProductModel?> fideProductModel({required String idProduct}) async {
     String path =
         'http://www.program2me.com/api/ungapi/getAllProductWhereId.php?id=$idProduct';

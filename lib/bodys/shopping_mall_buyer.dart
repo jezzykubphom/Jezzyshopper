@@ -121,8 +121,8 @@ class _ShoppingMallBuyerState extends State<ShoppingMallBuyer> {
                           ),
                         ),
                         ShowText(
-                          label: MyCalulate()
-                              .cutWord(string: userShopModels[index].Name),
+                          label: MyCalulate().cutWord(
+                              string: userShopModels[index].Name, number: 7),
                           textStyle: MyConstant().h3ActiveStyle(),
                         ),
                       ],
@@ -159,7 +159,8 @@ class _ShoppingMallBuyerState extends State<ShoppingMallBuyer> {
                           ),
                         ),
                         ShowText(
-                          label: productModels[index].name,
+                          label: MyCalulate().cutWord(
+                              string: productModels[index].name, number: 7),
                           textStyle: MyConstant().h3ActiveStyle(),
                         ),
                       ],
