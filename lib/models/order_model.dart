@@ -36,14 +36,14 @@ class OrderModel {
 
   factory OrderModel.fromMap(Map<String, dynamic> map) {
     return OrderModel(
-      codebuyer: map['codebuyer'] as String,
-      codeshoper: map['codeshoper'] as String,
-      idproduct: map['idproduct'] as String,
-      nameproduct: map['nameproduct'] as String,
-      priceproduct: map['priceproduct'] as String,
-      amountproduct: map['amountproduct'] as String,
-      sumproduct: map['sumproduct'] as String,
-      total: map['total'] as String,
+      codebuyer: (map['codebuyer'] ?? '') as String,
+      codeshoper: (map['codeshoper'] ?? '') as String,
+      idproduct: (map['idproduct'] ?? '') as String,
+      nameproduct: (map['nameproduct'] ?? '') as String,
+      priceproduct: (map['priceproduct'] ?? '') as String,
+      amountproduct: (map['amountproduct'] ?? '') as String,
+      sumproduct: (map['sumproduct'] ?? '') as String,
+      total: (map['total'] ?? '') as String,
     );
   }
 
