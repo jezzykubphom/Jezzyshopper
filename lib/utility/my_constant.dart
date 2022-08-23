@@ -15,6 +15,9 @@ class MyConstant {
     'Rider',
   ];
 
+  static String urlPromptpay =
+      'http://www.program2me.com/api/ungapi/images/promtpay0634932824.png';
+
   static String keyUser = 'user';
   static String keyTypeUser = 'typeUser';
 

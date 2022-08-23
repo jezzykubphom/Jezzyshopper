@@ -1,5 +1,10 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:jezzyshopping/models/product_model.dart';
 import 'package:jezzyshopping/models/sqlite_model.dart';
 import 'package:jezzyshopping/models/user_model.dart';
@@ -13,6 +18,7 @@ import 'package:jezzyshopping/widgets/show_image.dart';
 import 'package:jezzyshopping/widgets/show_progress.dart';
 import 'package:jezzyshopping/widgets/show_text.dart';
 import 'package:jezzyshopping/widgets/show_text_button.dart';
+import 'package:jezzyshopping/widgets/show_title%20.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ShowCart extends StatefulWidget {
@@ -37,6 +43,8 @@ class _ShowCartState extends State<ShowCart> {
   var sums = <String>[];
 
   UserModel? userModelShop;
+
+  File? file;
 
   @override
   void initState() {
@@ -105,13 +113,20 @@ class _ShowCartState extends State<ShowCart> {
     return load
         ? const ShowProgress()
         : haveData!
-            ? Column(
-                children: [
-                  newHead(),
-                  listProduct(),
-                  newTotal(),
-                  newButton(),
-                ],
+            ? SingleChildScrollView(
+                child: Column(
+                  children: [
+                    newHead(),
+                    listProduct(),
+                    newTotal(),
+                    imagePromptpay(),
+                    downloadQRcode(),
+                    titleConfirm(),
+                    imageslip(),
+                    uploadSlip(),
+                    newButton(),
+                  ],
+                ),
               )
             : Center(
                 child: ShowText(
@@ -119,6 +134,75 @@ class _ShowCartState extends State<ShowCart> {
                   textStyle: MyConstant().h1Style(),
                 ),
               );
+  }
+
+  Widget uploadSlip() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const ShowText(label: 'โอนเงินเรียบร้อย '),
+        ShowTextButton(
+          label: 'Upload Slip',
+          pressFunc: () async {
+            var result = await ImagePicker().pickImage(
+              source: ImageSource.gallery,
+              maxWidth: 800,
+              maxHeight: 800,
+            );
+
+            if (result != null) {
+              setState(() {
+                file = File(result.path);
+              });
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  Column downloadQRcode() {
+    return Column(
+      children: [
+        const ShowText(label: 'กรุณาสแกนด้วยแอพธนาคาร หรือ '),
+        ShowTextButton(
+          label: 'Download QRcode',
+          pressFunc: () {
+            processDownloadPromptpay();
+          },
+        ),
+        const ShowText(label: 'แล้วสแกนด้วยแอพธนาคาร'),
+      ],
+    );
+  }
+
+  Container imageslip() {
+    return Container(
+        margin: const EdgeInsets.symmetric(vertical: 16),
+        width: 250,
+        height: 250,
+        child: file == null
+            ? const ShowImage(
+                path: 'images/slip.png',
+              )
+            : Image.file(file!));
+  }
+
+  Row titleConfirm() {
+    return Row(
+      children: [
+        ShowTitle(title: 'ยืนยันการชำระเงิน :'),
+      ],
+    );
+  }
+
+  Container imagePromptpay() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      width: 200,
+      height: 200,
+      child: Image.network(MyConstant.urlPromptpay),
+    );
   }
 
   Row newButton() {
@@ -150,8 +234,27 @@ class _ShowCartState extends State<ShowCart> {
         ShowBotton(
           width: 150,
           label: 'Order',
-          pressFunc: () {
-            processOrderProduct();
+          pressFunc: () async {
+            if (file == null) {
+              MyDialog(context: context).normalDailog(
+                  title: 'No Slip',
+                  SubTitle: 'กรุณา Upload Slip ถ้าคุณชำระเงินเรียบร้อยแล้ว');
+            } else {
+              String urlUploadSlip =
+                  'http://www.program2me.com/api/ungapi/saveShop.php';
+              String nameSlip = 'Slip${Random().nextInt(100000)}.jpg';
+              Map<String, dynamic> map = {};
+              map['file'] =
+                  await MultipartFile.fromFile(file!.path, filename: nameSlip);
+              FormData formData = FormData.fromMap(map);
+              await Dio().post(urlUploadSlip, data: formData).then((value) {
+                String urlSlip =
+                    'http://www.program2me.com/api/ungapi/shop/$nameSlip';
+                print('urlSlip ==>> $urlSlip');
+
+                processOrderProduct(urlSlip: urlSlip);
+              });
+            }
           },
         ),
       ],
@@ -380,9 +483,9 @@ class _ShowCartState extends State<ShowCart> {
     );
   }
 
-  Future<void> processOrderProduct() async {
+  Future<void> processOrderProduct({required String urlSlip}) async {
     String urlAPI =
-        'http://www.program2me.com/api/ungapi/insertOrder.php?codebuyer=$codeBuyer&codeshoper=${sqliteModels[0].shopcode}&idproduct=${idProducts.toString()}&nameproduct=${names.toString()}&priceproduct=${prices.toString()}&amountproduct=${amounts.toString()}&sumproduct=$sums&total=$total';
+        'http://www.program2me.com/api/ungapi/insertOrder.php?codebuyer=$codeBuyer&codeshoper=${sqliteModels[0].shopcode}&idproduct=${idProducts.toString()}&nameproduct=${names.toString()}&priceproduct=${prices.toString()}&amountproduct=${amounts.toString()}&sumproduct=${sums.toString()}&total=$total&urlslip=$urlSlip';
 
     // print('urlAPI ==>> $urlAPI');
 
@@ -405,5 +508,26 @@ class _ShowCartState extends State<ShowCart> {
         );
       });
     });
+  }
+
+  Future<void> processDownloadPromptpay() async {
+    var response = await Dio().get(
+      MyConstant.urlPromptpay,
+      options: Options(responseType: ResponseType.bytes),
+    );
+
+    final result = await ImageGallerySaver.saveImage(
+      response.data,
+      name: 'promptpay0634932824',
+    );
+
+    if (result['isSuccess']) {
+      MyDialog(context: context).normalDailog(
+          title: 'Download Success',
+          SubTitle: 'กรุณาเปิดแอพธนาคารและสแกน QRcode รูปที่โหลด');
+    } else {
+      MyDialog(context: context).normalDailog(
+          title: 'Cannot Download', SubTitle: 'โหลดไม่สำเร็จ กรุณาลองใหม่');
+    }
   }
 }

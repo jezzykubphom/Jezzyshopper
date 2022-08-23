@@ -10,6 +10,8 @@ class OrderModel {
   final String amountproduct;
   final String sumproduct;
   final String total;
+  final String status;
+  final String urlslip;
   OrderModel({
     required this.codebuyer,
     required this.codeshoper,
@@ -19,6 +21,8 @@ class OrderModel {
     required this.amountproduct,
     required this.sumproduct,
     required this.total,
+    required this.status,
+    required this.urlslip,
   });
 
   Map<String, dynamic> toMap() {
@@ -31,19 +35,23 @@ class OrderModel {
       'amountproduct': amountproduct,
       'sumproduct': sumproduct,
       'total': total,
+      'status': status,
+      'urlslip': urlslip,
     };
   }
 
   factory OrderModel.fromMap(Map<String, dynamic> map) {
     return OrderModel(
-      codebuyer: (map['codebuyer'] ?? '') as String,
-      codeshoper: (map['codeshoper'] ?? '') as String,
-      idproduct: (map['idproduct'] ?? '') as String,
-      nameproduct: (map['nameproduct'] ?? '') as String,
-      priceproduct: (map['priceproduct'] ?? '') as String,
-      amountproduct: (map['amountproduct'] ?? '') as String,
-      sumproduct: (map['sumproduct'] ?? '') as String,
-      total: (map['total'] ?? '') as String,
+      codebuyer: map['codebuyer'] as String,
+      codeshoper: map['codeshoper'] as String,
+      idproduct: map['idproduct'] as String,
+      nameproduct: map['nameproduct'] as String,
+      priceproduct: map['priceproduct'] as String,
+      amountproduct: map['amountproduct'] as String,
+      sumproduct: map['sumproduct'] as String,
+      total: map['total'] as String,
+      status: map['status'] as String,
+      urlslip: map['urlslip'] as String,
     );
   }
 
