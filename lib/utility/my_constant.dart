@@ -61,7 +61,11 @@ class MyConstant {
         fontSize: 14,
         fontWeight: FontWeight.bold,
       );
-
+  TextStyle h3GreenStyle() => const TextStyle(
+        color: Colors.green,
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+      );
   TextStyle h3ActiveStyle() => const TextStyle(
         color: Colors.pink,
         fontSize: 14,
