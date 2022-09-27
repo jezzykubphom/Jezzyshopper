@@ -51,7 +51,7 @@ class _RiderServiceState extends State<RiderService> {
     userModel = await MyApi().findUserModel(user: keyUser!);
 
     bodys.add(ListJobRider(userModel: userModel!));
-    bodys.add(CurrentJobRider(userModelRider: userModel!));
+    bodys.add(CurrentJobRider(userModel: userModel!));
     setState(() {});
 
     processNotification();
