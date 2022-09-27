@@ -8,6 +8,7 @@ import 'package:jezzyshopping/models/user_model.dart';
 import 'package:jezzyshopping/utility/my_api.dart';
 import 'package:jezzyshopping/utility/my_calculate.dart';
 import 'package:jezzyshopping/utility/my_constant.dart';
+import 'package:jezzyshopping/utility/my_dialog.dart';
 import 'package:jezzyshopping/widgets/head_bill.dart';
 import 'package:jezzyshopping/widgets/show_button.dart';
 import 'package:jezzyshopping/widgets/show_image.dart';
@@ -190,7 +191,32 @@ class _OrderShoperState extends State<OrderShoper> {
                     label: 'หาคนส่งของ',
                     pressFunc: () {},
                   )
-                : const SizedBox(),
+                : checkstatus(orderModel: orderModel)
+                    ? ShowBotton(
+                        label: 'Rider รับของแล้ว',
+                        pressFunc: () async {
+                          var strings = MyCalulate()
+                              .changeStriongToArray(string: orderModel.status);
+
+                          strings[1] = 'delivery';
+
+                          String apiUpdateStatus =
+                              'http://www.program2me.com/api/ungapi/myorder_updatestatus.php?id=${orderModel.id}}&status=${strings.toString()}';
+                          await Dio().get(apiUpdateStatus).then((value) async {
+                            UserModel? userModelBuyer = await MyApi()
+                                .findUserModel(user: orderModel.codebuyer);
+                            await MyApi()
+                                .processSendNotification(
+                                    token: userModelBuyer!.token,
+                                    title: 'Rider Delivery',
+                                    body: 'Rider กำลังไปส่งของให้คุณ')
+                                .then((value) {
+                              readerOrder();
+                            });
+                          });
+                        },
+                      )
+                    : const SizedBox(),
       ],
     );
   }
@@ -266,5 +292,34 @@ class _OrderShoperState extends State<OrderShoper> {
     processNotiToAllRider();
   }
 
-  void processNotiToAllRider() {}
+  Future<void> processNotiToAllRider() async {
+    String pathAPI =
+        'http://www.program2me.com/api/ungapi/myOrderGetRiderNotWork.php';
+    await Dio().get(pathAPI).then((value) async {
+      if (value.toString() != 'null') {
+        for (var element in value.data) {
+          UserModel userModel = UserModel.fromMap(element);
+          await MyApi().processSendNotification(
+              token: userModel.token,
+              title: 'มี Order ใหม่',
+              body: 'มี Order ใหม่ กรุณากดรับงานด้วย');
+        }
+      } else {
+        MyDialog(context: context).normalDailog(
+            title: 'ไม่มี Rider ว่างขณะนี้',
+            SubTitle: 'รอสักครู่ค่อยมากดหาคนส่งของใหม่');
+      }
+    });
+  }
+
+  bool checkstatus({required OrderModel orderModel}) {
+    bool result = false;
+    var strings = MyCalulate().changeStriongToArray(string: orderModel.status);
+    print('String55 ==>> $strings');
+
+    if (strings[1] == 'rider') {
+      result = true;
+    }
+    return result;
+  }
 }
