@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:jezzyshopping/models/order_model.dart';
@@ -28,6 +30,7 @@ class _OrderShoperState extends State<OrderShoper> {
   var userBuyerModels = <UserModel>[];
 
   var listWidgets = <List<Widget>>[];
+  var totals = <int>[];
 
   @override
   void initState() {
@@ -57,6 +60,8 @@ class _OrderShoperState extends State<OrderShoper> {
         haveOrder = true;
 
         for (var element in value.data) {
+          totals.add(0);
+
           OrderModel orderModel = OrderModel.fromMap(element);
           orderModels.add(orderModel);
 
@@ -144,7 +149,9 @@ class _OrderShoperState extends State<OrderShoper> {
             Expanded(
               flex: 1,
               child: ShowText(
-                label: '1234',
+                label: MyCalulate().moneyFormat(
+                  money: MyCalulate().calulateTotal(sums: sums),
+                ),
                 textStyle: MyConstant().h3ActiveStyle(),
               ),
             ),
@@ -248,7 +255,7 @@ class _OrderShoperState extends State<OrderShoper> {
             .processSendNotification(
                 token: userModelBuyer.token,
                 title: 'ร้านค้ารับออเดอร์แล้ว',
-                body: 'ทางร้านกำลังเตรีมอาหาร เพื่อส่งให้ลูกค้า')
+                body: 'ร้านค้ากำลังหาคนส่งของให้ครับ')
             .then((value) {
           readerOrder();
         });
@@ -256,5 +263,8 @@ class _OrderShoperState extends State<OrderShoper> {
     });
 
     // Noti ALL Rider
+    processNotiToAllRider();
   }
+
+  void processNotiToAllRider() {}
 }

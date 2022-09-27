@@ -2,11 +2,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:jezzyshopping/bodys/my_order_buyer.dart';
 import 'package:jezzyshopping/bodys/shopping_mall_buyer.dart';
 import 'package:jezzyshopping/bodys/show_cart.dart';
 import 'package:jezzyshopping/models/user_model%20copy.dart';
 import 'package:jezzyshopping/utility/my_api.dart';
+import 'package:jezzyshopping/utility/my_calculate.dart';
 import 'package:jezzyshopping/utility/my_constant.dart';
 import 'package:jezzyshopping/widgets/show_menu.dart';
 import 'package:jezzyshopping/widgets/show_sign_out.dart';
@@ -54,6 +56,18 @@ class _BuyerServiceState extends State<BuyerService> {
     createBottomNavItems();
     setupLocalNoti();
     processNotification();
+    updatePositionBuyer();
+  }
+
+  Future<void> updatePositionBuyer() async {
+    Position position = await MyCalulate().findCurrentPosition();
+    print('##26sep position ==>> ${position.latitude}, ${position.longitude}');
+
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? code = preferences.getString(MyConstant.keyUser);
+
+    await MyApi().updateLatLng(
+        code: code!, lat: position.latitude, lng: position.longitude);
   }
 
   Future<void> setupLocalNoti() async {

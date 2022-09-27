@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class MyConstant {
+  static int factorDelivery = 15;
+
   static var urlBanners = <String>[
     'http://www.program2me.com/api/ungapi/banner/banner1.png',
     'http://www.program2me.com/api/ungapi/banner/banner2.png',

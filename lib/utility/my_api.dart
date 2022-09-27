@@ -3,6 +3,14 @@ import 'package:jezzyshopping/models/product_model.dart';
 import 'package:jezzyshopping/models/user_model.dart';
 
 class MyApi {
+  Future<void> updateLatLng(
+      {required String code, required double lat, required double lng}) async {
+    String path =
+        'http://www.program2me.com/api/ungapi/editUserLocationWhereCode.php?Code=$code&lat=$lat&lng=$lng';
+
+    await Dio().get(path).then((value) => print('update LatLng Success'));
+  }
+
   Future<void> processSendNotification({
     required String token,
     required String title,
