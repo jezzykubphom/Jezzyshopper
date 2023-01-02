@@ -36,6 +36,8 @@ class _CurrentJobRiderState extends State<CurrentJobRider> {
   BitmapDescriptor? bitMapBuyer, bitMapShopper;
   double? distanceShopUser, distanceRiderShop;
   String? statusRider;
+  bool? HaveJob;
+  bool load = true;
 
   @override
   void initState() {
@@ -56,11 +58,15 @@ class _CurrentJobRiderState extends State<CurrentJobRider> {
         'http://www.program2me.com/api/ungapi/myorder_getstatus.php?status=${strings.toString()}';
 
     await Dio().get(apiRider).then((value) {
+      load = false;
       if (value.toString() != 'null') {
+        HaveJob = true;
         statusRider = 'Go to Shop';
         for (var element in value.data) {
           orderModel = OrderModel.fromMap(element);
         }
+      } else {
+        HaveJob = false;
       }
     });
 
@@ -70,10 +76,13 @@ class _CurrentJobRiderState extends State<CurrentJobRider> {
         'http://www.program2me.com/api/ungapi/myorder_getstatus.php?status=${strings.toString()}';
     await Dio().get(apiDelivery).then((value) {
       if (value.toString() != 'null') {
+        HaveJob = true;
         statusRider = 'Go to Buyer';
         for (var element in value.data) {
           orderModel = OrderModel.fromMap(element);
         }
+      } else {
+        HaveJob = false;
       }
     });
     findModelBuyerShopper();
@@ -205,17 +214,28 @@ class _CurrentJobRiderState extends State<CurrentJobRider> {
     return Scaffold(
       body: LayoutBuilder(
         builder: (p0, BoxConstraints boxConstraints) {
-          return orderModel == null
+          return load
               ? const ShowProgress()
-              : Column(
-                  children: [
-                    newMap(boxConstraints),
-                    newContent(),
-                  ],
-                );
+              : HaveJob!
+                  ? mainContent(boxConstraints)
+                  : Center(
+                      child: ShowText(
+                        label: 'ยังไม่มีงาน',
+                        textStyle: MyConstant().h1Style(),
+                      ),
+                    );
           ;
         },
       ),
+    );
+  }
+
+  Column mainContent(BoxConstraints boxConstraints) {
+    return Column(
+      children: [
+        newMap(boxConstraints),
+        newContent(),
+      ],
     );
   }
 

@@ -17,7 +17,7 @@ class MyApi {
     required String body,
   }) async {
     String urlAPI =
-        'http://www.program2me.com/api/ungapi/ungJadNoti.php?isAdd=true&token=$token&title=$title&body=$body';
+        'http://www.program2me.com/api/ungapi/apiNotification.php?isAdd=true&token=$token&title=$title&body=$body';
 
     await Dio().get(urlAPI).then((value) {
       print('Send Notification Success');

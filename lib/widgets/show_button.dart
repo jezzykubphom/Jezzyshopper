@@ -7,12 +7,14 @@ class ShowBotton extends StatelessWidget {
   final String label;
   final Function() pressFunc;
   final double? width;
+  final Color? color;
 
   const ShowBotton({
     Key? key,
     required this.label,
     required this.pressFunc,
     this.width,
+    this.color,
   }) : super(key: key);
 
   @override
@@ -22,7 +24,7 @@ class ShowBotton extends StatelessWidget {
       width: width ?? 250,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: MyConstant.dark,
+          backgroundColor: color ?? MyConstant.dark,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),

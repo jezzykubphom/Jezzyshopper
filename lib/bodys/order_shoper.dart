@@ -189,7 +189,9 @@ class _OrderShoperState extends State<OrderShoper> {
             : orderModel.status == 'receive'
                 ? ShowBotton(
                     label: 'หาคนส่งของ',
-                    pressFunc: () {},
+                    pressFunc: () {
+                      processNotiToAllRider();
+                    },
                   )
                 : checkstatus(orderModel: orderModel)
                     ? ShowBotton(
@@ -245,11 +247,14 @@ class _OrderShoperState extends State<OrderShoper> {
                               label: orderModels[index].tdatetime!,
                               textStyle: MyConstant().h3Style(),
                             ),
-                            ShowText(
-                              label: orderModels[index].status,
-                              textStyle: orderModels[index].status == 'order'
-                                  ? MyConstant().h3ActiveStyle()
-                                  : MyConstant().h3GreenStyle(),
+                            SizedBox(
+                              width: 100,
+                              child: ShowText(
+                                label: orderModels[index].status,
+                                textStyle: orderModels[index].status == 'order'
+                                    ? MyConstant().h3ActiveStyle()
+                                    : MyConstant().h3GreenStyle(),
+                              ),
                             ),
                           ],
                         ),

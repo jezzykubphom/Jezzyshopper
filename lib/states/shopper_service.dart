@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:jezzyshopping/bodys/information_shoper.dart';
 import 'package:jezzyshopping/bodys/order_shoper.dart';
+import 'package:jezzyshopping/bodys/setting_pincode.dart';
 import 'package:jezzyshopping/models/user_model.dart';
 import 'package:jezzyshopping/utility/my_api.dart';
 import 'package:jezzyshopping/utility/my_constant.dart';
@@ -32,12 +33,14 @@ class _ShopperServiceState extends State<ShopperService> {
     const OrderShoper(),
     const InformationShoper(),
     const ManageProductShoper(),
+    const SettingPincode(),
   ];
 
   var titles = <String>[
     'My Order',
     'Information',
     'Manage Product',
+    'PinCode',
   ];
 
   int indexBody = 0;
@@ -191,48 +194,61 @@ class _ShopperServiceState extends State<ShopperService> {
 
   Drawer newDrawer() {
     return Drawer(
-      child: Column(
-        children: [
-          newHeadDrawer(),
-          ShowMenu(
-            iconData: Icons.shopping_bag_outlined,
-            title: 'MyOrder',
-            pressFunc: () {
-              Navigator.pop(context);
-              setState(() {
-                indexBody = 0;
-              });
-            },
-            subTitle: 'Order Wait Approve or Cancel',
-          ),
-          Divider(color: MyConstant.dark),
-          ShowMenu(
-            iconData: Icons.shop_2,
-            title: 'Information',
-            pressFunc: () {
-              Navigator.pop(context);
-              setState(() {
-                indexBody = 1;
-              });
-            },
-            subTitle: 'Details Shop',
-          ),
-          Divider(color: MyConstant.dark),
-          ShowMenu(
-            iconData: Icons.manage_search,
-            title: titles[2],
-            pressFunc: () {
-              Navigator.pop(context);
-              setState(() {
-                indexBody = 2;
-              });
-            },
-            subTitle: 'Manage Product',
-          ),
-          Divider(color: MyConstant.dark),
-          const Spacer(),
-          const ShowSignOut(),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            newHeadDrawer(),
+            ShowMenu(
+              iconData: Icons.shopping_bag_outlined,
+              title: 'MyOrder',
+              pressFunc: () {
+                Navigator.pop(context);
+                setState(() {
+                  indexBody = 0;
+                });
+              },
+              subTitle: 'Order Wait Approve or Cancel',
+            ),
+            Divider(color: MyConstant.dark),
+            ShowMenu(
+              iconData: Icons.shop_2,
+              title: 'Information',
+              pressFunc: () {
+                Navigator.pop(context);
+                setState(() {
+                  indexBody = 1;
+                });
+              },
+              subTitle: 'Details Shop',
+            ),
+            Divider(color: MyConstant.dark),
+            ShowMenu(
+              iconData: Icons.manage_search,
+              title: titles[2],
+              pressFunc: () {
+                Navigator.pop(context);
+                setState(() {
+                  indexBody = 2;
+                });
+              },
+              subTitle: 'Manage Product',
+            ),
+            Divider(color: MyConstant.dark),
+            ShowMenu(
+              iconData: Icons.pin,
+              title: titles[3],
+              pressFunc: () {
+                Navigator.pop(context);
+                setState(() {
+                  indexBody = 3;
+                });
+              },
+              subTitle: 'Setting Pincode',
+            ),
+            Divider(color: MyConstant.dark),
+            const ShowSignOut(),
+          ],
+        ),
       ),
     );
   }

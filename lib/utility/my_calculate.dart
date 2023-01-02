@@ -2,8 +2,16 @@ import 'dart:math';
 
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:jezzyshopping/widgets/show_progress.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyCalulate {
+  Future<String?> processFindMyPinCode() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    return preferences.getString('pincode');
+  }
+
   double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
     double distance = 0;
 

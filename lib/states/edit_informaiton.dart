@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:jezzyshopping/models/user_model.dart';
@@ -143,7 +144,18 @@ class _EidtInformationState extends State<EidtInformation> {
       maxWidth: 800,
       maxHeight: 800,
     );
-    file = File(result!.path);
+
+    var resultCrop = await ImageCropper().cropImage(
+      sourcePath: result!.path,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        // CropAspectRatioPreset.ratio16x9,
+        // CropAspectRatioPreset.ratio4x3,
+      ],
+    );
+
+    file = File(resultCrop!.path);
+
     change = true;
     setState(() {});
   }

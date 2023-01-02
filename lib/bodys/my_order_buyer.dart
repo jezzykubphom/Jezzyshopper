@@ -5,6 +5,7 @@ import 'package:jezzyshopping/models/user_model.dart';
 import 'package:jezzyshopping/utility/my_calculate.dart';
 import 'package:jezzyshopping/utility/my_constant.dart';
 import 'package:jezzyshopping/widgets/head_bill.dart';
+import 'package:jezzyshopping/widgets/show_button.dart';
 import 'package:jezzyshopping/widgets/show_progress.dart';
 import 'package:jezzyshopping/widgets/show_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,6 +33,11 @@ class _MyOrderBuyerState extends State<MyOrderBuyer> {
   }
 
   Future<void> readMyOrder() async {
+    if (orderModels.isNotEmpty) {
+      orderModels.clear();
+      listWidgets.clear();
+    }
+
     SharedPreferences preferences = await SharedPreferences.getInstance();
     codeBuyer = preferences.getString(MyConstant.keyUser);
 
@@ -66,6 +72,22 @@ class _MyOrderBuyerState extends State<MyOrderBuyer> {
               listOrder(
                   nameProducts, priceProducts, amountProducts, sumProducts),
               newTotal(orderModel),
+              checkDelivery(status: orderModel.status)
+                  ? ShowBotton(
+                      label: 'ยืนยันรับสินค้า',
+                      pressFunc: () async {
+                        var strings = MyCalulate()
+                            .changeStriongToArray(string: orderModel.status);
+
+                        strings[1] = 'finish';
+                        String path =
+                            'http://www.program2me.com/api/ungapi/myorder_updatestatus.php?id=${orderModel.id}&status=${strings.toString()}';
+                        await Dio().get(path).then((value) {
+                          readMyOrder();
+                        });
+                      },
+                    )
+                  : const SizedBox(),
             ],
           ));
           listWidgets.add(widgets);
@@ -139,16 +161,18 @@ class _MyOrderBuyerState extends State<MyOrderBuyer> {
         : haveOrder!
             ? ListView.builder(
                 itemCount: orderModels.length,
-                itemBuilder: (context, index) => ExpansionTile(
-                  title: Row(
-                    children: [
-                      ShowText(
-                        label: orderModels[index].codeshoper,
-                      ),
-                      ShowText(label: '  (${orderModels[index].status})'),
-                    ],
+                itemBuilder: (context, index) => Card(
+                  child: ExpansionTile(
+                    title: Row(
+                      children: [
+                        ShowText(
+                          label: orderModels[index].codeshoper,
+                        ),
+                        ShowText(label: '  (${orderModels[index].status})'),
+                      ],
+                    ),
+                    children: listWidgets[index],
                   ),
-                  children: listWidgets[index],
                 ),
               )
             : Center(
@@ -157,5 +181,18 @@ class _MyOrderBuyerState extends State<MyOrderBuyer> {
                   textStyle: MyConstant().h1Style(),
                 ),
               );
+  }
+
+  bool checkDelivery({required String status}) {
+    bool result = false;
+
+    if ((status != 'order') && (status != 'receive')) {
+      var strings = MyCalulate().changeStriongToArray(string: status);
+
+      if (strings[1] == 'delivery') {
+        result = true;
+      }
+    }
+    return result;
   }
 }
